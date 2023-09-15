@@ -3,11 +3,14 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('user')
 @ApiTags('用户管理')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService,
+    private readonly configService: ConfigService
+  ) { }
 
   @Post()
   @ApiOperation({ summary: '创建用户' })
@@ -17,6 +20,8 @@ export class UserController {
     type: CreateUserDto
   })
   create(@Body() createUserDto: CreateUserDto) {
+    console.log(this.configService.get<string>('database.url'));
+    
     return this.userService.create(createUserDto);
   }
 
