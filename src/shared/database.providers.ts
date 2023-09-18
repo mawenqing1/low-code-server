@@ -1,5 +1,5 @@
 import { ConfigService } from "@nestjs/config";
-import path from "path";
+import * as path from "path";
 import { DataSource, DataSourceOptions } from "typeorm";
 
 
