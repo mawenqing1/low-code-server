@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
 import { MongoRepository } from 'typeorm';
 import { User } from '../entities/user.mongo.entity';
+import { PaginationParamsDto } from 'src/shared/dtos/pagination-params.dto';
 
 @Injectable()
 export class UserService {
@@ -14,8 +14,15 @@ export class UserService {
     return this.UserRepository.save(user);
   }
 
-  async findAll(): Promise<{data: User[], count: number}> {
-    const [data, count] = await this.UserRepository.findAndCount({})
+  async findAll({pageSize, page}: PaginationParamsDto): Promise<{data: User[], count: number}> {
+    const [data, count] = await this.UserRepository.findAndCount({
+      skip: pageSize * (page - 1),
+      take: pageSize * 1,
+      order: {
+        name: 'DESC',
+      },
+      cache: true
+    })
     return { data, count }
   }
 

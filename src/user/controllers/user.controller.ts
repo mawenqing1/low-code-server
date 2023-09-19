@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { PaginationParamsDto } from 'src/shared/dtos/pagination-params.dto';
 
 @Controller('user')
 @ApiTags('用户管理')
@@ -20,8 +20,6 @@ export class UserController {
     type: CreateUserDto
   })
   create(@Body() createUserDto: CreateUserDto) {
-    console.log(this.configService.get<string>('database.url'));
-    
     return this.userService.create(createUserDto);
   }
 
@@ -31,9 +29,9 @@ export class UserController {
     status: HttpStatus.OK,
   })
   async findAll(
-    @Query() query: any
+    @Query() query: PaginationParamsDto
   ) {
-    const { data, count } = await this.userService.findAll();
+    const { data, count } = await this.userService.findAll(query);
     return {
       data,
       count
